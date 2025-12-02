@@ -12,6 +12,38 @@ fn is_invalid(input: &str) -> bool {
     return first_half == second_half;
 }
 
+fn is_invalid_pt2(input: &str) -> bool {
+
+        let len = input.len();
+    
+    // Try all possible pattern lengths from 1 to len/2
+    for pattern_len in 1..=(len / 2) {
+        // Check if the length is divisible by the pattern length
+        if len % pattern_len == 0 {
+            let repetitions = len / pattern_len;
+            
+            // Need at least 2 repetitions to be invalid
+            if repetitions >= 2 {
+                let pattern = &input[0..pattern_len];
+                
+                // Check if the entire ID is made of this pattern repeated
+                let is_repeated = (0..repetitions)
+                    .all(|i| {
+                        let start = i * pattern_len;
+                        let end = start + pattern_len;
+                        &input[start..end] == pattern
+                    });
+                
+                if is_repeated {
+                    return true;
+                }
+            }
+        }
+    }
+    
+    false
+}
+
 fn load_ranges(input_file: &str) -> Vec<String> {
     let mut ranges = Vec::new();
     if let Ok(lines) = helpers::read_lines(input_file) {
@@ -55,6 +87,28 @@ mod tests {
     }
 
     #[test]
+    fn test_is_valid_2() {
+        
+        assert_eq!(is_invalid_pt2("100"), false);
+        assert_eq!(is_invalid_pt2("1234"), false);
+        assert_eq!(is_invalid_pt2("123123"), true);
+        assert_eq!(is_invalid_pt2("123"), false);
+        assert_eq!(is_invalid_pt2("11"), true);
+        assert_eq!(is_invalid_pt2("22"), true);
+        assert_eq!(is_invalid_pt2("99"), true);
+        assert_eq!(is_invalid_pt2("1010"), true);
+        assert_eq!(is_invalid_pt2("1188511885"), true);
+        assert_eq!(is_invalid_pt2("222222"), true);
+        assert_eq!(is_invalid_pt2("446446"), true);
+        assert_eq!(is_invalid_pt2("38593859"), true);
+        assert_eq!(is_invalid_pt2("999"), true);
+        assert_eq!(is_invalid_pt2("1010"), true);
+        assert_eq!(is_invalid_pt2("565656"), true);
+        assert_eq!(is_invalid_pt2("824824824"), true);
+        assert_eq!(is_invalid_pt2("2121212121"), true);
+    }
+
+    #[test]
     fn test_simple_part_1() {
         let ranges = load_ranges("./src/resources/day02_simple.txt");
         let invalid_ranges: Vec<String> = ranges.into_iter().filter(|r| is_invalid(r)).collect();
@@ -64,11 +118,28 @@ mod tests {
     }
 
     #[test]
+    fn test_simple_part_2() {
+        let ranges = load_ranges("./src/resources/day02_simple.txt");
+        let invalid_ranges: Vec<String> = ranges.into_iter().filter(|r| is_invalid_pt2(r)).collect();
+        assert_eq!(invalid_ranges.len(), 13);
+        let sum = invalid_ranges.iter().map(|r| r.parse::<u64>().unwrap()).sum::<u64>();
+        assert_eq!(sum, 4174379265);
+    }
+
+    #[test]
     fn test_part_1() {
         let ranges = load_ranges("./src/resources/day02_input.txt");
         let invalid_ranges: Vec<String> = ranges.into_iter().filter(|r| is_invalid(r)).collect();
         let sum = invalid_ranges.iter().map(|r| r.parse::<u64>().unwrap()).sum::<u64>();
         println!("Part 1 sum of invalid ranges: {}", sum);
+    }
+
+    #[test]
+    fn test_part_2() {
+        let ranges = load_ranges("./src/resources/day02_input.txt");
+        let invalid_ranges: Vec<String> = ranges.into_iter().filter(|r| is_invalid_pt2(r)).collect();
+        let sum = invalid_ranges.iter().map(|r| r.parse::<u64>().unwrap()).sum::<u64>();
+        println!("Part 2 sum of invalid ranges: {}", sum);
     }
 
 }
