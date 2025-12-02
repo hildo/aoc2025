@@ -14,7 +14,7 @@ fn is_invalid(input: &str) -> bool {
 
 fn is_invalid_pt2(input: &str) -> bool {
 
-        let len = input.len();
+    let len = input.len();
     
     // Try all possible pattern lengths from 1 to len/2
     for pattern_len in 1..=(len / 2) {
