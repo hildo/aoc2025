@@ -1,5 +1,6 @@
 use crate::helpers;
 use core::str;
+use std::cmp::Reverse;
 
 /*
   Integer -> Char 
@@ -50,6 +51,46 @@ fn find_max_pair(input: &str) -> u32 {
     tens_place.to_digit(10).unwrap() * 10 + ones_place.to_digit(10).unwrap()
 }
 
+fn parse_string_to_numbers(input: &str) -> Vec<u64> {
+    input
+        .chars()
+        .into_iter()
+        .map(|char| char.to_string().parse().unwrap())
+        .collect()
+}
+
+fn parse_input(input: &str) -> Vec<Vec<u64>> {
+    input
+        .split("\n")
+        .into_iter()
+        .filter(|line| line.len() > 0)
+        .map(|line| parse_string_to_numbers(line))
+        .collect()
+}
+
+fn compute_max_joltage(input: &Vec<u64>, length: usize) -> u64 {
+    let mut joltage: u64 = 0;
+    let mut position = 0;
+    for digit_counter in (0..length).rev() {
+        let (max_position, max_value) = input[position..input.len() - digit_counter]
+            .iter()
+            .enumerate()
+            .min_by_key(|&(_, value)| Reverse(value))
+            .unwrap();
+
+        position += max_position + 1;
+        joltage += (10 as u64).pow(digit_counter as u32) * max_value;
+    }
+    joltage
+}
+
+fn sum_joltages(input: &str, length: usize) -> u64 {
+    parse_input(input)
+        .iter()
+        .map(|line| compute_max_joltage(line, length))
+        .sum()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -85,9 +126,22 @@ mod tests {
                     total += find_max_pair(&ip);
                 }
             }
-            println!("Day 03 Part 1:  {}", total);
-            // assert_eq!(total, 357);
+            assert_eq!(total, 17376);
         }
+    }
+
+    #[test]
+    fn test_simple_part_2() {
+        let input: &str = include_str!("../src/resources/day03_simple.txt");
+        let sum = sum_joltages(input, 12);
+        assert_eq!(sum, 3121910778619);
+    }
+
+    #[test]
+    fn test_part_2() {
+        let input: &str = include_str!("../src/resources/day03_input.txt");
+        let sum = sum_joltages(input, 12);
+        assert_eq!(sum, 172119830406258);
     }
 
 }
