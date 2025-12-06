@@ -2,9 +2,6 @@
 fn parse_input(input: &str) -> Vec<&str> {
     input
         .split("\n")
-        // .into_iter()
-        // .filter(|line| line.len() > 0)
-        // .map(|line| parse_string_to_numbers(line))
         .collect()
 }
 
