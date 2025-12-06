@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 struct Range {
     start: u64,
     end: u64
@@ -47,6 +47,56 @@ fn count_fresh_ingredients(ranges: &Vec<Range>, values: &Vec<u64>) -> u32 {
     count
 }
 
+fn count_from_ranges(ranges: Vec<Range>) -> u64 {
+    let mut active_ranges: Vec<Range> = Vec::new();
+
+    for range in ranges {
+        if active_ranges.is_empty() {
+            active_ranges.push(range);
+            continue;
+        }
+        
+        let mut overlapping_indices: Vec<usize> = Vec::new();
+        for range_idx in 0..active_ranges.len() {
+            let active_range = &active_ranges[range_idx];
+            if range.start <= active_range.end && range.end >= active_range.start {
+                // Ranges overlap, add to list
+                overlapping_indices.push(range_idx);
+            }
+        }
+
+        if overlapping_indices.is_empty() {
+            // No overlaps, just add the range
+            active_ranges.push(range);
+        } else {
+            // Merge overlapping ranges
+            let mut new_start = range.start;
+            let mut new_end = range.end;
+            for idx in &overlapping_indices {
+                let overlapping_range = &active_ranges[*idx];
+                if overlapping_range.start < new_start {
+                    new_start = overlapping_range.start;
+                }
+                if overlapping_range.end > new_end {
+                    new_end = overlapping_range.end;
+                }
+            }
+            // Remove overlapping ranges from active_ranges (in reverse order to preserve indices)
+            for idx in overlapping_indices.iter().rev() {
+                active_ranges.remove(*idx);
+            }
+            // Add the merged range
+            active_ranges.push(Range { start: new_start, end: new_end });
+        }
+    }
+
+    let mut count: u64 = 0;
+    for range in &active_ranges {
+        count += range.end - range.start + 1;
+    }
+    count
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -65,5 +115,22 @@ mod tests {
         let (ranges, values) = load_data(input);
         let fresh_count = count_fresh_ingredients(&ranges, &values);
         assert_eq!(fresh_count, 601);
-    }    
+    }
+
+    #[test]
+    fn test_simple_part_2() {
+        let input: &str = include_str!("../src/resources/day05_simple.txt");
+        let (ranges, values) = load_data(input);
+        let fresh_count = count_from_ranges(ranges);
+        assert_eq!(fresh_count, 14);
+    }
+
+    #[test]
+    fn test_part_2() {
+        let input: &str = include_str!("../src/resources/day05_input.txt");
+        let (ranges, values) = load_data(input);
+        let fresh_count = count_from_ranges(ranges);
+        assert_eq!(fresh_count, 367899984917516);
+    }
+
 }
