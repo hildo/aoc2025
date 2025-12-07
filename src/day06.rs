@@ -134,7 +134,7 @@ mod tests {
     #[test]
     fn test_simple_part_2() {
         let input: &str = include_str!("../src/resources/day06_simple.txt");
-        let mut problems = load_data2(input);
+        let problems = load_data2(input);
         let total: u64 = problems.iter().map(|f | f.execute()).sum();
         assert_eq!(total, 3263827);
     }    

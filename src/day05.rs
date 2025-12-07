@@ -120,7 +120,7 @@ mod tests {
     #[test]
     fn test_simple_part_2() {
         let input: &str = include_str!("../src/resources/day05_simple.txt");
-        let (ranges, values) = load_data(input);
+        let (ranges, _) = load_data(input);
         let fresh_count = count_from_ranges(ranges);
         assert_eq!(fresh_count, 14);
     }
@@ -128,7 +128,7 @@ mod tests {
     #[test]
     fn test_part_2() {
         let input: &str = include_str!("../src/resources/day05_input.txt");
-        let (ranges, values) = load_data(input);
+        let (ranges, _) = load_data(input);
         let fresh_count = count_from_ranges(ranges);
         assert_eq!(fresh_count, 367899984917516);
     }
