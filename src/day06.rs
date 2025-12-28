@@ -1,16 +1,16 @@
 use std::u64;
 
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 struct Problem {
     values: Vec<u64>,
-    operation: String
+    operation: String,
 }
 
 impl Problem {
     fn new() -> Problem {
         Problem {
             values: Vec::new(),
-            operation: String::new()
+            operation: String::new(),
         }
     }
 
@@ -25,7 +25,7 @@ impl Problem {
         match self.operation.as_str() {
             "+" => self.values.iter().sum(),
             "*" => self.values.iter().product(),
-            _ => 0
+            _ => 0,
         }
     }
 }
@@ -38,28 +38,36 @@ fn load_data(input: &str) -> Vec<Problem> {
     for (line_idx, line) in input.lines().enumerate() {
         if line_idx == line_count - 1 {
             // populate Operations
-            let operations = line.split(' ')
+            let operations = line
+                .split(' ')
                 .map(|s| s.trim())
                 .filter(|s| !s.is_empty())
                 .collect::<Vec<&str>>();
 
-            operations.iter().enumerate().for_each(|(op_idx, operation)| {
-                problems[op_idx].set_operation(operation.to_string());
-            })
+            operations
+                .iter()
+                .enumerate()
+                .for_each(|(op_idx, operation)| {
+                    problems[op_idx].set_operation(operation.to_string());
+                })
         } else {
-            let split_values = line.split(' ')
+            let split_values = line
+                .split(' ')
                 .map(|s| s.trim())
                 .filter(|s| !s.is_empty())
                 .map(|s| s.parse().unwrap())
                 .collect::<Vec<u32>>();
-            
-            split_values.iter().enumerate().for_each(|(value_idx, value)| {
-                if line_idx == 0 {
-                    // initialize problems
-                    problems.push(Problem::new());
-                }
-                problems[value_idx].add_value(*value as u64);
-            });
+
+            split_values
+                .iter()
+                .enumerate()
+                .for_each(|(value_idx, value)| {
+                    if line_idx == 0 {
+                        // initialize problems
+                        problems.push(Problem::new());
+                    }
+                    problems[value_idx].add_value(*value as u64);
+                });
         }
     }
 
@@ -87,9 +95,15 @@ fn load_data2(input: &str) -> Vec<Problem> {
         } else {
             operation_line.len() - 1
         };
-        
+
         let mut problem = Problem::new();
-        problem.set_operation(operation_line.chars().nth(operation_idx).unwrap().to_string());
+        problem.set_operation(
+            operation_line
+                .chars()
+                .nth(operation_idx)
+                .unwrap()
+                .to_string(),
+        );
 
         for col_idx in (left_edge..=right_edge).rev() {
             let mut new_value: u64 = 0;
@@ -120,14 +134,14 @@ mod tests {
     fn test_simple_part_1() {
         let input: &str = include_str!("../src/resources/day06_simple.txt");
         let problems = load_data(input);
-        let total: u64 = problems.iter().map(|f | f.execute()).sum();
+        let total: u64 = problems.iter().map(|f| f.execute()).sum();
         assert_eq!(total, 4277556);
     }
-        #[test]
+    #[test]
     fn test_part_1() {
         let input: &str = include_str!("../src/resources/day06_input.txt");
         let problems = load_data(input);
-        let total: u64 = problems.iter().map(|f | f.execute()).sum();
+        let total: u64 = problems.iter().map(|f| f.execute()).sum();
         assert_eq!(total, 6295830249262);
     }
 
@@ -135,16 +149,15 @@ mod tests {
     fn test_simple_part_2() {
         let input: &str = include_str!("../src/resources/day06_simple.txt");
         let problems = load_data2(input);
-        let total: u64 = problems.iter().map(|f | f.execute()).sum();
+        let total: u64 = problems.iter().map(|f| f.execute()).sum();
         assert_eq!(total, 3263827);
-    }    
+    }
 
-        #[test]
+    #[test]
     fn test_part_2() {
         let input: &str = include_str!("../src/resources/day06_input.txt");
         let problems = load_data2(input);
-        let total: u64 = problems.iter().map(|f | f.execute()).sum();
+        let total: u64 = problems.iter().map(|f| f.execute()).sum();
         assert_eq!(total, 9194682052782);
     }
-
 }
